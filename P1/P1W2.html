@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mette Langaas">
+<meta name="dcterms.date" content="2024-11-12">
+
+<title>MA8701 Advanced methods in statistical inference and learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="P1W2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="P1W2_files/libs/quarto-html/quarto.js"></script>
+<script src="P1W2_files/libs/quarto-html/popper.min.js"></script>
+<script src="P1W2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="P1W2_files/libs/quarto-html/anchor.min.js"></script>
+<link href="P1W2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="P1W2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="P1W2_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="P1W2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="P1W2_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#messages-to-students" id="toc-messages-to-students" class="nav-link active" data-scroll-target="#messages-to-students">Messages to students</a>
+  <ul class="collapse">
+  <li><a href="#learning" id="toc-learning" class="nav-link" data-scroll-target="#learning">Learning</a></li>
+  <li><a href="#plan-for-the-week" id="toc-plan-for-the-week" class="nav-link" data-scroll-target="#plan-for-the-week">Plan for the week</a></li>
+  </ul></li>
+  <li><a href="#model-selection-and-assessment" id="toc-model-selection-and-assessment" class="nav-link" data-scroll-target="#model-selection-and-assessment">Model selection and assessment</a></li>
+  <li><a href="#the-bias-variance-trade-off" id="toc-the-bias-variance-trade-off" class="nav-link" data-scroll-target="#the-bias-variance-trade-off">The bias-variance trade-off</a>
+  <ul class="collapse">
+  <li><a href="#group-activity" id="toc-group-activity" class="nav-link" data-scroll-target="#group-activity">Group activity</a></li>
+  <li><a href="#expected-prediction-error" id="toc-expected-prediction-error" class="nav-link" data-scroll-target="#expected-prediction-error">Expected prediction error</a></li>
+  <li><a href="#training-error" id="toc-training-error" class="nav-link" data-scroll-target="#training-error">Training error</a></li>
+  <li><a href="#group-discussion" id="toc-group-discussion" class="nav-link" data-scroll-target="#group-discussion">Group discussion</a></li>
+  <li><a href="#loss-function-and-training-error-for-classification" id="toc-loss-function-and-training-error-for-classification" class="nav-link" data-scroll-target="#loss-function-and-training-error-for-classification">Loss function and training error for classification</a></li>
+  <li><a href="#double-descent" id="toc-double-descent" class="nav-link" data-scroll-target="#double-descent">Double descent</a></li>
+  </ul></li>
+  <li><a href="#optimism-of-the-training-error-rate" id="toc-optimism-of-the-training-error-rate" class="nav-link" data-scroll-target="#optimism-of-the-training-error-rate">Optimism of the training error rate</a>
+  <ul class="collapse">
+  <li><a href="#in-sample-error" id="toc-in-sample-error" class="nav-link" data-scroll-target="#in-sample-error">In-sample error</a></li>
+  <li><a href="#optimism" id="toc-optimism" class="nav-link" data-scroll-target="#optimism">Optimism</a></li>
+  <li><a href="#average-optimism" id="toc-average-optimism" class="nav-link" data-scroll-target="#average-optimism">Average optimism</a></li>
+  <li><a href="#covariance-result" id="toc-covariance-result" class="nav-link" data-scroll-target="#covariance-result">Covariance result</a></li>
+  <li><a href="#group-discussion-1" id="toc-group-discussion-1" class="nav-link" data-scroll-target="#group-discussion-1">Group discussion</a></li>
+  </ul></li>
+  <li><a href="#expected-in-sample-prediction-error" id="toc-expected-in-sample-prediction-error" class="nav-link" data-scroll-target="#expected-in-sample-prediction-error">Expected in-sample prediction error</a>
+  <ul class="collapse">
+  <li><a href="#result-for-omega" id="toc-result-for-omega" class="nav-link" data-scroll-target="#result-for-omega">Result for <span class="math inline">\(\omega\)</span></a></li>
+  <li><a href="#group-discussion-2" id="toc-group-discussion-2" class="nav-link" data-scroll-target="#group-discussion-2">Group discussion</a></li>
+  </ul></li>
+  <li><a href="#three-ways-to-perform-model-selection" id="toc-three-ways-to-perform-model-selection" class="nav-link" data-scroll-target="#three-ways-to-perform-model-selection">Three ways to perform model selection</a></li>
+  <li><a href="#estimates-of-expected-in-sample-prediction-error" id="toc-estimates-of-expected-in-sample-prediction-error" class="nav-link" data-scroll-target="#estimates-of-expected-in-sample-prediction-error">Estimates of (expected) in-sample prediction error</a>
+  <ul class="collapse">
+  <li><a href="#c_p-statistics" id="toc-c_p-statistics" class="nav-link" data-scroll-target="#c_p-statistics"><span class="math inline">\(C_p\)</span> statistics</a></li>
+  <li><a href="#akaike-information-criterion-aic" id="toc-akaike-information-criterion-aic" class="nav-link" data-scroll-target="#akaike-information-criterion-aic">Akaike information criterion (AIC)</a></li>
+  <li><a href="#expected-in-sample-prediction-error-for-binary-classification" id="toc-expected-in-sample-prediction-error-for-binary-classification" class="nav-link" data-scroll-target="#expected-in-sample-prediction-error-for-binary-classification">Expected in-sample prediction error for binary classification</a></li>
+  <li><a href="#group-discussion-3" id="toc-group-discussion-3" class="nav-link" data-scroll-target="#group-discussion-3">Group discussion</a></li>
+  </ul></li>
+  <li><a href="#the-effective-number-of-parameters" id="toc-the-effective-number-of-parameters" class="nav-link" data-scroll-target="#the-effective-number-of-parameters">The effective number of parameters</a></li>
+  <li><a href="#cross-validation-cv" id="toc-cross-validation-cv" class="nav-link" data-scroll-target="#cross-validation-cv">Cross-validation (CV)</a>
+  <ul class="collapse">
+  <li><a href="#formal-set-up-for-model-assessment" id="toc-formal-set-up-for-model-assessment" class="nav-link" data-scroll-target="#formal-set-up-for-model-assessment">Formal set-up for model assessment</a></li>
+  <li><a href="#formal-set-up-for-model-selection" id="toc-formal-set-up-for-model-selection" class="nav-link" data-scroll-target="#formal-set-up-for-model-selection">Formal set-up for model selection</a></li>
+  <li><a href="#pima-indian-example" id="toc-pima-indian-example" class="nav-link" data-scroll-target="#pima-indian-example">Pima indian example</a></li>
+  <li><a href="#group-discussion-4" id="toc-group-discussion-4" class="nav-link" data-scroll-target="#group-discussion-4">Group discussion</a></li>
+  <li><a href="#choice-of-k" id="toc-choice-of-k" class="nav-link" data-scroll-target="#choice-of-k">Choice of <span class="math inline">\(K\)</span></a></li>
+  <li><a href="#generalized-cross-validation-gcv" id="toc-generalized-cross-validation-gcv" class="nav-link" data-scroll-target="#generalized-cross-validation-gcv">Generalized cross-validation (GCV)</a></li>
+  <li><a href="#the-wrong-and-the-right-way-to-do-cross-validation" id="toc-the-wrong-and-the-right-way-to-do-cross-validation" class="nav-link" data-scroll-target="#the-wrong-and-the-right-way-to-do-cross-validation">The wrong and the right way to do cross-validation</a></li>
+  <li><a href="#group-discussion-5" id="toc-group-discussion-5" class="nav-link" data-scroll-target="#group-discussion-5">Group discussion</a></li>
+  </ul></li>
+  <li><a href="#bootstrap-methods" id="toc-bootstrap-methods" class="nav-link" data-scroll-target="#bootstrap-methods">Bootstrap methods</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a>
+  <ul class="collapse">
+  <li><a href="#group-discussion-6" id="toc-group-discussion-6" class="nav-link" data-scroll-target="#group-discussion-6">Group discussion:</a></li>
+  <li><a href="#final-remarks" id="toc-final-remarks" class="nav-link" data-scroll-target="#final-remarks">Final remarks</a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a>
+  <ul class="collapse">
+  <li><a href="#relate-the-covariance-to-the-trace-of-a-linear-smoother" id="toc-relate-the-covariance-to-the-trace-of-a-linear-smoother" class="nav-link" data-scroll-target="#relate-the-covariance-to-the-trace-of-a-linear-smoother">Relate the covariance to the trace of a linear smoother</a></li>
+  <li><a href="#derive-the-estimate-of-in-sample-error" id="toc-derive-the-estimate-of-in-sample-error" class="nav-link" data-scroll-target="#derive-the-estimate-of-in-sample-error">Derive the estimate of in-sample error</a></li>
+  <li><a href="#additive-error-model-effective-degrees-of-freedom" id="toc-additive-error-model-effective-degrees-of-freedom" class="nav-link" data-scroll-target="#additive-error-model-effective-degrees-of-freedom">Additive error model effective degrees of freedom</a></li>
+  <li><a href="#uio-stk-in4300stk-in9300-statistical-learning-methods-in-data-science" id="toc-uio-stk-in4300stk-in9300-statistical-learning-methods-in-data-science" class="nav-link" data-scroll-target="#uio-stk-in4300stk-in9300-statistical-learning-methods-in-data-science">UiO STK-IN4300/STK-IN9300 –– Statistical learning methods in Data Science</a></li>
+  <li><a href="#comparing-methods" id="toc-comparing-methods" class="nav-link" data-scroll-target="#comparing-methods">Comparing methods</a></li>
+  </ul></li>
+  <li><a href="#solutions-to-exercises" id="toc-solutions-to-exercises" class="nav-link" data-scroll-target="#solutions-to-exercises">Solutions to exercises</a></li>
+  <li><a href="#reference-links" id="toc-reference-links" class="nav-link" data-scroll-target="#reference-links">Reference links</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Bibliography</a></li>
+  <li><a href="#discussion-and-conclusions" id="toc-discussion-and-conclusions" class="nav-link" data-scroll-target="#discussion-and-conclusions">Discussion and conclusions</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="P1W2.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="P1W2.pdf"><i class="bi bi-file-pdf"></i>Beamer</a></li></ul></div></nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">MA8701 Advanced methods in statistical inference and learning</h1>
+<p class="subtitle lead">P1W1: Model selection and assessment</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mette Langaas </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 12, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="messages-to-students" class="level1">
+<h1>Messages to students</h1>
+<p>Course homepage: <a href="https://wiki.math.ntnu.no/ma8701/2025v/start" class="uri">https://wiki.math.ntnu.no/ma8701/2025v/start</a></p>
+<ul>
+<li>Read before the W2-lectures:
+<ul>
+<li>ESL Ch 7.1-7.x</li>
+<li><span class="citation" data-cites="ISL2">James et al. (<a href="#ref-ISL2" role="doc-biblioref">2023</a>)</span> Ch 10.8 on interpolation and double descent</li>
+<li>ESL Ch 7.x-7.6</li>
+<li>ESL 7.10-7.12</li>
+</ul></li>
+<li>Work on exercises in the bottom of this page after the W2-lectures.</li>
+</ul>
+<section id="learning" class="level2">
+<h2 class="anchored" data-anchor-id="learning">Learning</h2>
+<p>Quotation - Jonas von Essen</p>
+<hr>
+</section>
+<section id="plan-for-the-week" class="level2">
+<h2 class="anchored" data-anchor-id="plan-for-the-week">Plan for the week</h2>
+<ol type="1">
+<li>Look at <span class="math inline">\(\text{EPE}(x_0)\)</span> (now called Err(<span class="math inline">\(x_0\)</span>)) and how model complexity can be broken down into irreducible error, squared bias and variance (should be known from before), and expland to double descent</li>
+<li>Study EPE (Err) unconditional and conditional on the training set</li>
+<li>Study optimism of the training error rate, and how in-sample error may shed light</li>
+<li>Cross-validation and .632 bootstrap estimates of EPE</li>
+<li>How will we build on this in the rest of the course?</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="model-selection-and-assessment" class="level1">
+<h1>Model selection and assessment</h1>
+<p>We use a training set to estimate <span class="math inline">\(\hat{f}\)</span>.</p>
+<p>The generalization performance of <span class="math inline">\(\hat{f}\)</span> can be evaluated from the EPE (expected prediction error) on an independent data set.</p>
+<p>We use this for</p>
+<ul>
+<li>Model selection: select the best model for a specific task - among a set of models</li>
+<li>Model assessment: evaluate the performance of a selected model</li>
+</ul>
+<hr>
+<p>If we are in a <em>data rich situation</em> we “just” divide our data into three parts, and use</p>
+<ul>
+<li>one for training</li>
+<li>one for validation (model selection)</li>
+<li>one for testing (model assessment)</li>
+</ul>
+<p>A typical split might be 50-60% training and 20-25% validation and test, but this depends on the complexity of the model to be fitted and the signal-to-noise ratio in the data.</p>
+<p>The focus in Ch 7 of ESL is to present methods to be used in the situations where we <em>do not have enough data</em> to rely on the training-validation-testing split.</p>
+<p>And, even if we have enough data - what we now will learn will give us insight into much used methods for model assessment and model selection!</p>
+<hr>
+</section>
+<section id="the-bias-variance-trade-off" class="level1">
+<h1>The bias-variance trade-off</h1>
+<p>(ESL 2.4 p 26 and 7.3)</p>
+<p>Assume additive error model (mainly regression setting): <span class="math display">\[ Y=f(X)+\varepsilon\]</span> where <span class="math inline">\(\text{E}(\varepsilon)=0\)</span> and <span class="math inline">\(\text{Var}(\varepsilon)=\sigma_{\varepsilon}^2\)</span>.</p>
+<p>For the bias-variance decomposition we only consider the squared loss. Why?</p>
+<p>In Ch 7 we use the notation Err instead of EPE (expected prediction error) that we used in Ch 2, and now we have estimated <span class="math inline">\(f\)</span> by <span class="math inline">\(\hat{f}\)</span>.</p>
+<p>Let</p>
+<ul>
+<li><span class="math inline">\(\text{Err}(x_0)\)</span> be the expected prediction error of a regression fit <span class="math inline">\(\hat{f}(X)\)</span> at a (new) input value <span class="math inline">\(X=x_0\)</span>.</li>
+<li>The expected value is over <span class="math inline">\((X,Y)\)</span> for Err, and we may also look at</li>
+</ul>
+<p><span class="math display">\[ \text{Err}=E_{x_0} \text{Err}(x_0)\]</span> How can we partition <span class="math inline">\(\text{Err}(x_0)\)</span> into different sources?</p>
+<hr>
+<p><span class="math display">\[ \text{Err}(x_0)=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]=\sigma_{\varepsilon}^2 +  \text{Var}[\hat{f}(x_0)]+[\text{Bias}(\hat{f}(x_0))]^2\]</span></p>
+<ul>
+<li>First term: irreducible error, <span class="math inline">\(\text{Var}(\varepsilon)=\sigma^2\)</span> and is always present unless we have measurements without error. This term cannot be reduced regardless how well our statistical model fits the data.</li>
+<li>Second term: variance of the prediction at <span class="math inline">\(x_0\)</span> or the expected deviation around the mean at <span class="math inline">\(x_0\)</span>. If the variance is high, there is large uncertainty associated with the prediction.</li>
+<li>Third term: squared bias. The bias gives an estimate of how much the prediction differs from the true mean. If the bias is low the model gives a prediction which is close to the true value.</li>
+</ul>
+<hr>
+<section id="group-activity" class="level2">
+<h2 class="anchored" data-anchor-id="group-activity">Group activity</h2>
+<ul>
+<li>Remind yourself on how this derivation was done and the meaning of each term.</li>
+<li>What is the role of <span class="math inline">\(x_0\)</span> here? How can you get rid of <span class="math inline">\(x_0\)</span>?</li>
+</ul>
+<hr>
+<section id="derivation" class="level3">
+<h3 class="anchored" data-anchor-id="derivation">Derivation</h3>
+<p>If you need to refresh your memory of the bias-variance trade-off, you might also look at the exam Problem 2 <a href="https://www.math.ntnu.no/emner/TMA4268/Exam/V2018e.pdf">TMA4268 2018 exam</a> with <a href="https://www.math.ntnu.no/emner/TMA4268/Exam/e2018sol.pdf">solutions</a></p>
+<p>Also: <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html">TMA4268</a> and in particular <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html">Module 2</a></p>
+<hr>
+<p>The following is a derivation:</p>
+<p><span class="math display">\[\begin{align*} \text{Err}(x_0)&amp;=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]\\
+&amp;=\text{E}[Y^2 + \hat{f}(x_0)^2 - 2 Y \hat{f}(x_0)\mid X=x_0] \\
+&amp;= \text{E}[Y^2\mid X=x_0] + \text{E}[\hat{f}(x_0)^2\mid X=x_0] - \text{E}[2Y \hat{f}(x_0)\mid X=x_0]\\
+&amp;= \text{Var}[Y\mid X=x_0] + \text{E}[Y\mid X=x_0]^2 + \text{Var}[\hat{f}(x_0)\mid X=x_0] + \text{E}[\hat{f}(x_0)\mid X=x_0]^2 - 2 \text{E}[Y\mid X=x_0]\text{E}[\hat{f}(x_0)\mid X=x_0] \\
+&amp;= \text{Var}[Y\mid X=x_0]+f(x_0)^2+\text{Var}[\hat{f}(x_0)\mid X=x_0]+\text{E}[\hat{f}(x_0)\mid X=x_0]^2-2f(x_0)\text{E}[\hat{f}(x_0)\mid X=x_0]\\
+&amp;= \text{Var}[Y\mid X=x_0]+\text{Var}[\hat{f}(x_0)\mid X=x_0]+(f(x_0)-\text{E}[\hat{f}(x_0)\mid X=x_0])^2\\
+&amp;= \text{Var}(\varepsilon\mid X=x_0) +  \text{Var}[\hat{f}(x_0)\mid X=x_0]+[\text{Bias}(\hat{f}(x_0))\mid X=x_0]^2
+\end{align*}\]</span> </p>
+<p>(For some applications also the training Xs are fixed.) See the exercises below to study the results for <span class="math inline">\(k\)</span>NN and OLS.</p>
+<hr>
+</section>
+</section>
+<section id="expected-prediction-error" class="level2">
+<h2 class="anchored" data-anchor-id="expected-prediction-error">Expected prediction error</h2>
+<p>(ESL 7.2 and 7.4, and we are now back to a general loss function - but first have regression in mind)</p>
+<p>If we now keep the training set fixed (we would do that in practice - since we often only have one training set):</p>
+<p><span class="math display">\[ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{f}(X))\mid {\cal T}]\]</span></p>
+<p>as before the expected value is with respect to <span class="math inline">\((X,Y)\)</span>, but the training set is fixed - so that this is the test set error is for this specific training set <span class="math inline">\({\cal T}\)</span>.</p>
+<p>Getting back to the unconditional version, we take expected value over ALL that is random - now including the training set <span class="math display">\[ \text{Err}=\text{E}(\text{E}[L(Y,\hat{f}(X))\mid {\cal T}])=\text{E}_{\cal T} [\text{Err}_{\cal T}]\]</span></p>
+<p>We want to estimate <span class="math inline">\(\text{Err}_{\cal T}\)</span> (but we will soon see that it turns out that most methods estimate <span class="math inline">\(\text{Err}\)</span>).</p>
+<hr>
+</section>
+<section id="training-error" class="level2">
+<h2 class="anchored" data-anchor-id="training-error">Training error</h2>
+<p>(also referred to as apparent error)</p>
+<p>For a regression problem: The training error is the average loss over the training sample: <span class="math display">\[\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))\]</span></p>
+<!--Unfortuneately the training error is  not a good estimate of the test error. -->
+<hr>
+</section>
+<section id="group-discussion" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion">Group discussion</h2>
+<p>Look at Figure 7.1 (with figure caption) on page 220 in the ESL book. The text reads that “100 simulated training sets of size 50” and that “lasso produced sequence of fits” (this means that we have different model complexities on the x-axis).</p>
+<p>Explain what you see - in particular what are the red and blue lines and the bold lines. What can you conclude from the figure?</p>
+<ul>
+<li>Red lines=</li>
+<li>Bold red line=</li>
+<li>Blue lines=</li>
+<li>Bold blue line=</li>
+</ul>
+<hr>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ELSfig71.png" class="img-fluid figure-img" width="374"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>(from Figure 7.1)</p>
+<p>The training error <span class="math inline">\(\overline{\text{err}}\)</span> is not a good estimate for the <span class="math inline">\(\text{Err}_{\cal T}\)</span> nor the <span class="math inline">\(\text{Err}\)</span>.</p>
+<hr>
+</section>
+</section>
+<section id="loss-function-and-training-error-for-classification" class="level2">
+<h2 class="anchored" data-anchor-id="loss-function-and-training-error-for-classification">Loss function and training error for classification</h2>
+<ul>
+<li><span class="math inline">\(X \in \Re^p\)</span></li>
+<li><span class="math inline">\(G \in {\cal G}=\{1,\ldots,K\}\)</span></li>
+<li><span class="math inline">\(\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}\)</span></li>
+</ul>
+<p>0-1 loss with <span class="math inline">\(\hat{G}(X)=\text{argmax}_k \hat{p}_k(X)\)</span> <span class="math display">\[L(G,\hat{G}(X))=I(G\neq \hat{G}(X))\]</span> <span class="math inline">\(-2\)</span>-loglikelihood loss (why <span class="math inline">\(-2\)</span>?): <span class="math display">\[ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)\]</span></p>
+<hr>
+<p>Test error (only replace <span class="math inline">\(\hat{f}\)</span> with <span class="math inline">\(\hat{G}\)</span>): <span class="math display">\[ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]\]</span> <span class="math display">\[ \text{Err}=\text{E}[\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]]=\text{E} [\text{Err}_{\cal T}]\]</span></p>
+<p>Training error (for 0-1 loss) <span class="math display">\[\overline{\text{err}}=\frac{1}{N}\sum_{i=1}^N I(g_i\neq \hat{g}(x_i))\]</span> Training error (for <span class="math inline">\(-2\)</span>loglikelihood loss) <span class="math display">\[\overline{\text{err}}=-\frac{2}{N}\sum_{i=1}^N \text{log}\hat{p}_{g_i}(x_i)\]</span></p>
+<hr>
+</section>
+<section id="double-descent" class="level2">
+<h2 class="anchored" data-anchor-id="double-descent">Double descent</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><embed src="../../NotGit/10_20.pdf" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><embed src="../../NotGit/10_21.pdf" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="optimism-of-the-training-error-rate" class="level1">
+<h1>Optimism of the training error rate</h1>
+<p>(again - focus is on regression)</p>
+<p>First, nothing new, but new notation <span class="math inline">\((X^0,Y^0)\)</span> to specify that a new test observation is drawn from the joint distribution <span class="math inline">\(F\)</span> (both over new <span class="math inline">\(X\)</span> and new <span class="math inline">\(Y\)</span>):</p>
+<p><span class="math display">\[\text{Err}_{\cal T}=\text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]\]</span></p>
+<p>and then the averaging over the training set (both <span class="math inline">\(X\)</span>s and <span class="math inline">\(Y\)</span>s in the training set): <span class="math display">\[\text{Err}=\text{E}_{\cal T} \text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]\]</span></p>
+<p>This is also called <em>extra-sample error</em> (in contrast to what we now will define to be in-sample).</p>
+<hr>
+<p>We saw before - from the ESL Figure 7.1, the training error <span class="math inline">\(\overline{\text{err}}\)</span> is (in general) less than (or equal to) the true test error, so not a good estimator for the test error.</p>
+<p><span class="math display">\[\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))\]</span></p>
+<p>[In Exercise 2.9 we prove that the expected training error is smaller or equal the expected error of a testset - for MLR. Important to work on this exercise!]</p>
+<p>Part of this is due to where the <span class="math inline">\(X\)</span> values are “placed”. The test input vectors need not be “in the same positions” as in the training <span class="math inline">\(X\)</span> values (when the mean is taken over the full distribution of <span class="math inline">\(X\)</span>).</p>
+<p>To eliminate this “confusing fact”, calculations can be made be assuming the <span class="math inline">\(X\)</span>-values in the training data are kept fixed - and this is called the <em>in-sample error</em>. (We did the same in TMA4267 using the Fahrmeir et al book, Chapter 3.4.)</p>
+<hr>
+<section id="in-sample-error" class="level2">
+<h2 class="anchored" data-anchor-id="in-sample-error">In-sample error</h2>
+<p><span class="math display">\[\text{Err}_{\text{in}}=\frac{1}{N}\sum_{i=1}^N \text{E}_{Y^0}[L(Y_i^0,\hat{f}(x_i))\mid {\cal T}]\]</span></p>
+<p>Observe that we now take the expected value over distribution of the response - but that the (new) responses are found at the original training points. The training predictor positions <span class="math inline">\(x_i\)</span>, <span class="math inline">\(i=1,\ldots, N\)</span> are fixed. In addition the responses in the training data are also kept fixed, so the only random quantity here is the new responses at the fixed predictors.</p>
+<hr>
+</section>
+<section id="optimism" class="level2">
+<h2 class="anchored" data-anchor-id="optimism">Optimism</h2>
+<p>Optimism is defined as the difference between the in-sample error and the training error:</p>
+<p><span class="math display">\[ \text{op}=\text{Err}_{\text{in}}-\overline{\text{err}}\]</span></p>
+</section>
+<section id="average-optimism" class="level2">
+<h2 class="anchored" data-anchor-id="average-optimism">Average optimism</h2>
+<p>is defined as the expected value of the optimism, where the expectation is taken over the distribution of the training responses - denoted <span class="math inline">\({\mathbf y}\)</span> (training predictors still kept fixed):</p>
+<p><span class="math display">\[ \omega=\text{E}_{\mathbf y}(op)=\text{E}_{\mathbf y}(\text{Err}_{\text{in}})-\text{E}_{\mathbf y}(\overline{\text{err}})\]</span></p>
+<p>Observe that if we write <span class="math inline">\({\cal T}\)</span> then the expectation is taken over the distribution of both the predictors and responses in the training set, and we here write <span class="math inline">\({\mathbf y}\)</span> for taking the distribution only over the reponses in the training set (not the predictors in the training set).</p>
+<p>We will focus on “modelling” <span class="math inline">\(\omega\)</span>, “instead of” <span class="math inline">\(\text{Err}\)</span>.</p>
+<hr>
+</section>
+<section id="covariance-result" class="level2">
+<h2 class="anchored" data-anchor-id="covariance-result">Covariance result</h2>
+<p>For squared error, 0-1 loss, and “other loss functions” it can be shown</p>
+<p><span class="math display">\[ \omega=\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)\]</span></p>
+</section>
+<section id="group-discussion-1" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion-1">Group discussion</h2>
+<ol type="1">
+<li>Give an interpretation of the result.</li>
+<li>How do you think this result can be used?</li>
+<li>Study the derivation of the covariance formula for squared loss. This is Exercise 7.4 and solutions are available <a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ESLe74add.pdf">here</a> and in the <a href="https://waxworksmath.com/Authors/G_M/Hastie/hastie.html">ESL solutions to exercises</a>.</li>
+</ol>
+<hr>
+<p>Interpretation:</p>
+<ul>
+<li>how much the training error <em>underestimates</em> the true error depends on how strongly the observed response <span class="math inline">\(y_i\)</span> affects its own prediction <span class="math inline">\(\hat{y}_i\)</span>.</li>
+<li>the <em>harder</em> we fit the data the greater the covariance - which increases the expected (averaged) optimism.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="expected-in-sample-prediction-error" class="level1">
+<h1>Expected in-sample prediction error</h1>
+<p><span class="math display">\[ \text{E}_{\mathbf y}(\text{Err}_{\text{in}})=\text{E}_{\mathbf y}(\overline{\text{err}})+\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)\]</span> This is the starting point for several methods to “penalize” fitting complex models!</p>
+<hr>
+<section id="result-for-omega" class="level2">
+<h2 class="anchored" data-anchor-id="result-for-omega">Result for <span class="math inline">\(\omega\)</span></h2>
+<p>Additive error model and squared loss: <span class="math inline">\(Y=f(X)+\varepsilon\)</span>, with <span class="math inline">\(\hat{y}_i\)</span> obtained by a linear fit with <span class="math inline">\(d\)</span> inputs (or basis functions) <span class="math display">\[\omega=2 \frac{d}{N}\sigma_{\varepsilon}^2\]</span></p>
+<p>Proof: ESL <a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ESLe71.pdf">7.1</a></p>
+<hr>
+<p>For the proof: Remember that the trace of a square matrix is the sum of the diagonal elements, and trace is often denoted tr.</p>
+<p>What is the trace (tr) for MLR?</p>
+<p><span class="math inline">\(\text{tr}({\mathbf H})=\text{tr}({\mathbf X}({\mathbf X}^T{\mathbf X})^{-1}{\mathbf X}^T)=\text{tr}(({\mathbf X}^T{\mathbf X})^{-1}{\mathbf X}^T{\mathbf X})=\text{tr}({\mathbf I})_{p+1}=(p+1)\)</span> if intercept model with <span class="math inline">\(p\)</span> covariates.</p>
+<hr>
+</section>
+<section id="group-discussion-2" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion-2">Group discussion</h2>
+<ul>
+<li>Comment on the derivation of <span class="math inline">\(\omega\)</span> - anything unclear?</li>
+<li>How does <span class="math inline">\(d\)</span> and <span class="math inline">\(N\)</span> and <span class="math inline">\(\sigma^2_{\varepsilon}\)</span> influence the average optimism?</li>
+</ul>
+<hr>
+<p>Observe that the optimism increases with <span class="math inline">\(d\)</span> and decreases with <span class="math inline">\(N\)</span>.</p>
+<p>Comment: versions of the formula hold approximately for other error models than linear with squared loss (ESL mention binary data and entropy loss), but not in general for 0-1 loss (page 231, bottom, with reference to Efron 1986 - consult the ESL book).</p>
+<hr>
+</section>
+</section>
+<section id="three-ways-to-perform-model-selection" class="level1">
+<h1>Three ways to perform model selection</h1>
+<ul>
+<li><p>Estimate of expected in-sample prediction error (ESL Ch 7.5-7.6): We may develop the average optimism for a class of models that are linear in the parameters (Mallows Cp, AIC, BIC, …) - and compare models of different complexity using <span class="math inline">\(\text{E}_{\mathbf y}(\text{Err}_{\text{in}})\)</span>. Remark: in-sample error is not of interest, but used to choose between models effectively.</p></li>
+<li><p>Estimate <span class="math inline">\(\text{Err}\)</span> (ESL Ch 7.10-7.11): We may instead use resampling methods (cross-validation and bootstrapping) to estimate <span class="math inline">\(\text{Err}\)</span> directly (and use that for model selection and assessment).</p></li>
+<li><p>In the data rich approach: we have so much data that we use a separate validation set for model selection (and a separate test set for model assessment). That is not the focus of ESL Ch 7.</p></li>
+</ul>
+<hr>
+</section>
+<section id="estimates-of-expected-in-sample-prediction-error" class="level1">
+<h1>Estimates of (expected) in-sample prediction error</h1>
+<p>We have the following result:</p>
+<p><span class="math display">\[ \text{E}_{\mathbf y}(\text{Err}_{\text{in}})=\text{E}_{\mathbf y}(\overline{\text{err}})+\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)\]</span> where now <span class="math display">\[ \omega=\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)\]</span> We now want to get an estimate of the average optimism, to get an estimate of the in-sample prediction error:</p>
+<p><span class="math display">\[ \widehat{\text{Err}_{\text{in}}}=\overline{\text{err}}+\hat{\omega}\]</span></p>
+<p>Comment: observe that <span class="math inline">\(\overline{\text{err}}\)</span> is now an estimate of <span class="math inline">\(\text{E}_{\mathbf y}(\overline{\text{err}})\)</span> and even though we write <span class="math inline">\(\widehat{\text{Err}_{\text{in}}}\)</span> we are aiming to estimate <span class="math inline">\(\text{E}_{\mathbf y}(\text{Err}_{\text{in}})\)</span>. Focus now is on <span class="math inline">\(\hat{\omega}\)</span>!</p>
+<hr>
+<section id="c_p-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="c_p-statistics"><span class="math inline">\(C_p\)</span> statistics</h2>
+<p>for squared error loss (follows directly from the <span class="math inline">\(\omega\)</span>-result for additive error model)</p>
+<p><span class="math display">\[C_p=\overline{\text{err}}+2\frac{d}{N}\hat{\sigma}_{\varepsilon}^2\]</span> where <span class="math inline">\(\hat{\sigma}_{\varepsilon}^2\)</span> is estimated from a “low-bias model” (in MLR we use a “full model”).</p>
+<p>(This method is presented both in TMA4267 and TMA4268, see also exam question <a href="https://www.math.ntnu.no/emner/TMA4267/2017v/Exam/eV2015.pdf">Problem 3 in TMA4267 in 2015</a> and <a href="https://www.math.ntnu.no/emner/TMA4267/2017v/Exam/lV2015.pdf">solutions</a>.)</p>
+<hr>
+</section>
+<section id="akaike-information-criterion-aic" class="level2">
+<h2 class="anchored" data-anchor-id="akaike-information-criterion-aic">Akaike information criterion (AIC)</h2>
+<p>Based on different asymptotic (<span class="math inline">\(N \rightarrow \infty\)</span>) relationship for log-likelihood loss functions</p>
+<p><span class="math display">\[ -2 \text{E}[\log P_{\hat{\theta}}(Y)]\approx - \frac{2}{N} \text{E}[\text{loglik}]+2 \frac{d}{N} \]</span></p>
+<ul>
+<li><span class="math inline">\(P_{\hat{\theta}}(Y)\)</span>: family of density for <span class="math inline">\(Y\)</span> where the true density is included</li>
+<li><span class="math inline">\(\hat{\theta}\)</span>: MLE of <span class="math inline">\(\theta\)</span></li>
+<li><span class="math inline">\(\text{loglik}\)</span>: maximized log-likelihood <span class="math inline">\(\sum_{i=1}^N \log P_{\hat{\theta}}(y_i)\)</span></li>
+</ul>
+<p><strong>Logistic regression with binomial loglikelihood</strong></p>
+<p><span class="math display">\[ \text{AIC}=- \frac{2}{N} \text{loglik}+2 \frac{d}{N}\]</span> <strong>Multiple linear regression</strong> if variance <span class="math inline">\(\sigma_{\varepsilon}^2=\hat{\sigma}_{\varepsilon}^2\)</span> assumed known then AIC is equivalent to <span class="math inline">\(C_p\)</span>.</p>
+<p>For nonlinear or similar models then <span class="math inline">\(d\)</span> is replaced by some measure of model complexity.</p>
+<hr>
+<p><strong>AIC as function of tuning parameter</strong> (back to squared error loss)</p>
+<p>We have a set of models <span class="math inline">\(f_{\alpha}(x)\)</span> indexed by some tuning parameter <span class="math inline">\(\alpha\)</span>.</p>
+<p><span class="math display">\[\text{AIC}(\alpha)=\overline{\text{err}}(\alpha)+2 \frac{d(\alpha)}{N}\hat{\sigma}_{\varepsilon}^2\]</span></p>
+<ul>
+<li><span class="math inline">\(\overline{\text{err}}(\alpha)\)</span>: training error</li>
+<li><span class="math inline">\(d(\alpha)\)</span> number of parameters</li>
+<li><span class="math inline">\(\hat{\sigma}_{\varepsilon}^2\)</span> estimated variance of large model</li>
+</ul>
+<p>The model complexity <span class="math inline">\(\alpha\)</span> is chosen to minimize <span class="math inline">\(\text{AIC}(\alpha)\)</span>.</p>
+<p>This is not true if the models are chosen adaptively (for example basis functions) this formula underestimates the optimism - and we may regard this as the <em>effective number of parameters</em> is larger than <span class="math inline">\(d\)</span>.</p>
+<hr>
+</section>
+<section id="expected-in-sample-prediction-error-for-binary-classification" class="level2">
+<h2 class="anchored" data-anchor-id="expected-in-sample-prediction-error-for-binary-classification">Expected in-sample prediction error for binary classification</h2>
+<p>(<span class="citation" data-cites="casi">Efron and Hastie (<a href="#ref-casi" role="doc-biblioref">2016</a>)</span> page 225)</p>
+<p>Misclassification loss function: <span class="math inline">\(L(\hat{G}(X),G)=1\)</span> for incorrect classification and <span class="math inline">\(0\)</span> for correct.</p>
+<p>The training error is then <span class="math inline">\(\overline{\text{err}}=(\#{(\hat{G}_i\neq G_i}))/N\)</span>.</p>
+<p>The insample error is then <span class="math inline">\(\frac{1}{N}\sum_{i=1}^N P(G_{0i}(X_i)\neq \hat{G}(X_i))\)</span>.</p>
+<p>The estimate of (expected) in-sample prediction error is then <span class="math display">\[ \widehat{\text{Err}_{\text in}}=\frac{\#{(\hat{G}_i\neq G_i})}{N}+\frac{2}{N}\sum_{i=1}^N \text{Cov}(\hat{G}(X_i),G(X_i))\]</span> where <span class="math display">\[\text{Cov}(\hat{G}(X_i),G(X_i))=\text{E}(\hat{G}(X_i)\cdot G(X_i))-\text{E}(\hat{G}(X_i))\cdot \text{E}(G(X_i))\]</span> <span class="math display">\[=\mu_i (1-\mu_i)[P(\hat{G}(X_i)=1 \mid G(X_i)=1)-P(\hat{G}(X_i)=1 \mid G(X_i)=0)]\]</span> where <span class="math inline">\(\mu_i=P(G(X_i)=1)\)</span>.</p>
+<hr>
+</section>
+<section id="group-discussion-3" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion-3">Group discussion</h2>
+<p>What is the take home message from this part on “Estimates of (expected) in-sample prediction error”?</p>
+<hr>
+</section>
+</section>
+<section id="the-effective-number-of-parameters" class="level1">
+<h1>The effective number of parameters</h1>
+<p>(ESL 7.6)</p>
+<p>The number of parameters <span class="math inline">\(d\)</span> can be generalized into an <em>effective number of parameters</em>. We will look at linear fitting method:</p>
+<p><span class="math display">\[ \hat{\mathbf y}={\mathbf Sy}\]</span> where <span class="math inline">\({\mathbf S}\)</span> as a <span class="math inline">\(n \times n\)</span> matrix depending on covariates <span class="math inline">\(x_i\)</span> but not responses <span class="math inline">\(y_i\)</span>.</p>
+<ul>
+<li>MLR <span class="math inline">\({\mathbf H}={\mathbf X}({\mathbf X}^T{\mathbf X})^{-1}{\mathbf X}^T\)</span></li>
+<li>cubic smoothing splines</li>
+<li>ridge regression</li>
+</ul>
+<p>The effective number of parameters is</p>
+<p><span class="math display">\[\text{df}({\mathbf S})=\text{trace}({\mathbf S})\]</span></p>
+<hr>
+<p><strong>Additive error model and squared loss:</strong> <span class="math inline">\(Y=f(X)+\varepsilon\)</span> with <span class="math inline">\(\text{Var}(\varepsilon)=\sigma_{\varepsilon}^2\)</span> then <span class="math display">\[ \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)=\text{trace}({\mathbf S})\sigma_{\varepsilon}^2\]</span> leading to a generalization <span class="math display">\[\text{df}(\hat{{\mathbf y}})=\frac{\sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)}{\sigma_{\varepsilon}^2}\]</span> See exercise 7.5 to prove this.</p>
+<!-- We return to this formula when we look at neural networks with quadratic penalization (weigth decay, ridge regularization) in Part 2.  -->
+<hr>
+</section>
+<section id="cross-validation-cv" class="level1">
+<h1>Cross-validation (CV)</h1>
+<p>(ESL Ch 7.10, 7.12 - most should be known from TMA4268)</p>
+<p>The aim is to estimate <span class="math inline">\(\text{Err}_{\cal T}\)</span>, but from simulation analyses (ESL Ch 7.12) it turns out that cross-validation estimates <span class="math inline">\(\text{Err}\)</span> “the best”.</p>
+<p>The starting point for the method is that we only have one training set - and try to use that for either model selection or model assessment (not both).</p>
+<p>What to do when both is needed, is not covered in this chapter. Nested cross-validations aka two-layers of cross-validation is one possibility. Another is to set aside data for a test set for model assessment, but use the training set in cross-validation for model selection.</p>
+<hr>
+<section id="formal-set-up-for-model-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="formal-set-up-for-model-assessment">Formal set-up for model assessment</h2>
+<ul>
+<li><p>The allocation of observation <span class="math inline">\(\{1,\ldots,N\}\)</span> to folds <span class="math inline">\(\{1,\ldots,K\}\)</span> is done using an indexing function <span class="math inline">\(\kappa: \{1,\ldots,N\} \rightarrow \{1,\ldots,K\}\)</span>, that for each observation allocate the observation to one of <span class="math inline">\(K\)</span> folds.</p></li>
+<li><p>Further, <span class="math inline">\(\hat{f}^{-k}(x)\)</span> is the fitted function, computed on the observations except the <span class="math inline">\(k\)</span>th fold (the observations from the <span class="math inline">\(k\)</span>th fold is removed).</p></li>
+<li><p>The CV estimate of the expected prediction error <span class="math inline">\(\text{Err}=\text{E}_{\cal T} \text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]\)</span> is then <span class="math display">\[ \text{CV}(\hat{f})=\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}^{-k(i)}(x_i))\]</span></p></li>
+</ul>
+<p><span class="citation" data-cites="casi">Efron and Hastie (<a href="#ref-casi" role="doc-biblioref">2016</a>)</span> page 218: “<span class="math inline">\(\text{CV}(\hat{f})\)</span> is estimating the average prediction error of the algorithm producing <span class="math inline">\(\hat{f}\)</span>, not <span class="math inline">\(\hat{f}\)</span> itself”.</p>
+<hr>
+</section>
+<section id="formal-set-up-for-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="formal-set-up-for-model-selection">Formal set-up for model selection</h2>
+<ul>
+<li><p>The indexing function <span class="math inline">\(\kappa\)</span> is unchanged, and for the fitting function we add a tuning parameter <span class="math inline">\(\alpha\)</span>: <span class="math inline">\(f(x,\alpha)\)</span> such that <span class="math inline">\(\hat{f}^{-k}(x,\alpha)\)</span> is the fitted function using tuning parameter <span class="math inline">\(\alpha\)</span>, with the <span class="math inline">\(k\)</span>th fold removed from the model fitting.</p></li>
+<li><p>The expected prediction error is estimated by</p></li>
+</ul>
+<p><span class="math display">\[ \text{CV}(\hat{f},\alpha)=\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}^{-k(i)}(x_i,\alpha))\]</span></p>
+<ul>
+<li><p>We find the best tuning parameter <span class="math inline">\(\hat{\alpha}\)</span> that minimize the <span class="math inline">\(\text{CV}(\hat{f},\alpha)\)</span>. Alternatively the <em>one-standard error rule</em> can be used: choose the most parsimonious (“smallest”) model whose error is no more than one standard error above the error of the best model.</p></li>
+<li><p>This best chosen model is then fit to all the data. (ESL page 242).</p></li>
+</ul>
+<hr>
+</section>
+<section id="pima-indian-example" class="level2">
+<h2 class="anchored" data-anchor-id="pima-indian-example">Pima indian example</h2>
+<p>We will use the classical data set of <em>diabetes</em> from a population of women of Pima Indian heritage in the US, available in the R <code>MASS</code> package. This version of the data has no missing values. The following information is available for each woman:</p>
+<ul>
+<li>diabetes: <code>0</code>= not present, <code>1</code>= present</li>
+<li>npreg: number of pregnancies</li>
+<li>glu: plasma glucose concentration in an oral glucose tolerance test</li>
+<li>bp: diastolic blood pressure (mmHg)</li>
+<li>skin: triceps skin fold thickness (mm)</li>
+<li>bmi: body mass index (weight in kg/(height in m)<span class="math inline">\(^2\)</span>)</li>
+<li>ped: diabetes pedigree function.</li>
+<li>age: age in years</li>
+</ul>
+<p>We will use the default division into training and test in the MASS library, with 200 observations for training and 332 for testing. (We only use the training data here now.)</p>
+<hr>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="P1W2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="group-discussion-4" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion-4">Group discussion</h2>
+<p>The lasso logistic regression (to be studied in Part 2) was used to fit the data, and some loss function is plotted on the vertical axis (more in Part 2) and on the horisontal axis the loss for different fits for different choices of a complexity parameter is given. 10-fold crossvalidation is used. (Just assume that a generic prediction is used, this is not meant to be specific for the lasso.)</p>
+<ul>
+<li>What are the red dots and how have they been calculated?</li>
+<li>What are the the vertical bars sticking out of each red dot, and how have they been calculated? What do they picture?</li>
+<li>What (your choice) is the optimal choice of the complexity parameter?</li>
+</ul>
+<hr>
+</section>
+<section id="choice-of-k" class="level2">
+<h2 class="anchored" data-anchor-id="choice-of-k">Choice of <span class="math inline">\(K\)</span></h2>
+<ul>
+<li>Popular choices are 5 and 10 based on observations in simulation studies- and arguments similar to a bias-variance trace off.</li>
+<li><span class="math inline">\(K=N\)</span> is called <em>leave-one-out</em> cross-validation LOOCV, and gives the lowest bias for estimating the <span class="math inline">\(\text{Err}\)</span>.</li>
+</ul>
+<hr>
+<div class="cell" data-layout-align="left">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="ESLfig78.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="generalized-cross-validation-gcv" class="level2">
+<h2 class="anchored" data-anchor-id="generalized-cross-validation-gcv">Generalized cross-validation (GCV)</h2>
+<p>For LOOCV with squared loss and linear fitting. Remember <span class="math display">\[ \hat{\mathbf y}={\mathbf Sy}\]</span> For many fitting methods (including MLR)</p>
+<p><span class="math display">\[ \frac{1}{N}\sum_{i=1}^N [y_i-\hat{f}^{-i}(x_i)]^2=\frac{1}{N}\sum_{i=1}^N [\frac{y_i-\hat{f}(x_i)}{1-S_{ii}}]^2\]</span> where <span class="math inline">\(S_{ii}\)</span> is the <span class="math inline">\(i\)</span>th diagonal element of <span class="math inline">\({\mathbf S}\)</span>. This leads to the GCV approximation:</p>
+<p><span class="math display">\[ \text{GCV}(\hat{f})=\frac{1}{N}\sum_{i=1}^N [\frac{y_i-\hat{f}(x_i)}{1-\text{tr}({\mathbf S})/N}]^2\]</span> where we recognise the effective number of parameters <span class="math inline">\(\text{trace}({\mathbf S})\)</span>. In some settings the <span class="math inline">\(\text{trace}({\mathbf S})\)</span> is computed more easily than the individual elements <span class="math inline">\(S_{ii}\)</span>.</p>
+<hr>
+</section>
+<section id="the-wrong-and-the-right-way-to-do-cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="the-wrong-and-the-right-way-to-do-cross-validation">The wrong and the right way to do cross-validation</h2>
+<p>In short: make sure that all part of the model fit process is “inside” the CV.</p>
+<p>See learning material from TMA4268: <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#the_right_and_the_wrong_way_to_do_cross-validation">Module 5: Resampling</a>, and I also recommend to work on <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#problem_3:_selection_bias_and_the_%E2%80%9Cwrong_way_to_do_cv%E2%80%9D">Problem 3</a> with <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample-sol.pdf">solutions</a></p>
+</section>
+<section id="group-discussion-5" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion-5">Group discussion</h2>
+<p>Can you give one example of a right way to do cross-valiation and also a wrong way? If you want you may used the Pima-indians as an example, but other examples may also be used.</p>
+<hr>
+</section>
+</section>
+<section id="bootstrap-methods" class="level1">
+<h1>Bootstrap methods</h1>
+<p>(ESL Ch 7.11 - bootstrapping is known from TMA4268 and TMA4300, but not the special case of estimating <span class="math inline">\(\text{Err}\)</span>). <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#the_bootstrap">Bootstrap in TMA4268: Module 5</a></p>
+<p><strong>Notation:</strong> <span class="math inline">\({\mathbf Z}=(z_1,\ldots,z_N)\)</span> is the training set with <span class="math inline">\(z_i=(x_i,y_i)\)</span>.</p>
+<p><strong>Aim:</strong> Of interest is some quantity calculated from the data <span class="math inline">\({\mathbf Z}\)</span>, denoted <span class="math inline">\(S({\mathbf Z})\)</span>. We will have focus on the expected prediction error.</p>
+<p><strong>Resampling:</strong> We draw with replacement from <span class="math inline">\({\mathbf Z}\)</span> a total of <span class="math inline">\(N\)</span> observations into <span class="math inline">\({\mathbf Z}^{*b}\)</span>. We repeat this <span class="math inline">\(B\)</span> times.</p>
+<p><strong>Estimator for expected predicted error <span class="math inline">\(\text{Err}\)</span>:</strong></p>
+<p><span class="math display">\[\widehat{\text{Err}}_{\text{boot}}=\frac{1}{B}\frac{1}{N}\sum_{b=1}^B \sum_{i=1}^N L(y_i,\hat{f}^{*b}(x_i))\]</span></p>
+<hr>
+<p>However - <span class="math inline">\(\widehat{\text{Err}}_{\text{boot}}\)</span> is not a good estimator: bootstrap datasets are acting as training data and the original data as a test sample - and the two samples have observations in common.</p>
+<p>This overlap can make predictions too good. Remember, in CV we have no overlap.</p>
+<p><strong>Q:</strong> What is the probability that observation <span class="math inline">\(i\)</span> is included in bootstrap sample <span class="math inline">\(b\)</span>?</p>
+<hr>
+<p>The problem is given in TMA4268 Module 5 as <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#recexboot">Problem 1</a> with (handwritten) <a href="https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample-sol.pdf">solutions</a>.</p>
+<p>The answer is <span class="math inline">\(1-(1-\frac{1}{N})^N\approx 1-e^{-1}=0.632\)</span>.</p>
+<p>Why is this relevant?</p>
+<p>What if we try to change the bootstrap <span class="math inline">\(\text{Err}\)</span> estimator - so that we for each observation <span class="math inline">\(i\)</span> only keep predictions from bootstrap samples where this observation is not present? Then we would mimic the CV-estimator.</p>
+<hr>
+<p>The <em>leave-one-out</em> bootstrap estimate:</p>
+<p><span class="math display">\[\widehat{\text{Err}}^{(1)}=\frac{1}{N} \sum_{i=1}^N \frac{1}{\lvert C^{-i} \rvert} \sum_{b \in C^{-i}} L(y_i,\hat{f}^{*b}(x_i))\]</span> where <span class="math inline">\(C^{-i}\)</span> are the indices in the bootstrap sample <span class="math inline">\(b\)</span> that do not contain observation <span class="math inline">\(i\)</span>, and <span class="math inline">\(\lvert C^{-i} \rvert\)</span> is the number of samples. (<span class="math inline">\(B\)</span> must be large enough that we do not get any <span class="math inline">\(C^{-i}\)</span>s that are empty, or leave out these zero sets in the formula.)</p>
+<p>Comment: this is also called out-of-bootstrap, and is closely connected to the popular out-of-bag estimate for random forests.</p>
+<hr>
+<p>There is an addition fix to make the estimate even better.</p>
+<p>Since the average number of distinct observations in each bootstrap sample is approximately <span class="math inline">\(0.632 N\)</span> - and the bootstrap sample behaves like a training set - this gives a socalled training-set-size bias (similar to C with <span class="math inline">\(K=2\)</span>), meaning that the leave-one-out bootstrap estimator will be <em>biased upwards</em>. This can be fixed by weighing together the leave-one-out boostrap estimator with the training error.</p>
+<p>The “.632” estimator:</p>
+<p><span class="math display">\[\widehat{\text{Err}}^{(.632)}=0.368 \overline{\text{err}}+0.632 \widehat{\text{Err}}^{(1)}\]</span></p>
+<hr>
+<p>According to ESL (page 251): the derivation of the .632 estimator is complex, and the estimator is expected to work well in situation where the data is not overfitted, but may break down in overfit situations.</p>
+<p>According to CASI (page 323) the .632 rule is less variable than the leave-one-out CV.</p>
+<p>Example of this on page 251-252: two equal size classes where predictors independent of class, classification with <span class="math inline">\(1\)</span>NN gives <span class="math inline">\(\overline{\text{err}}=0\)</span> and <span class="math inline">\(\widehat{\text{Err}}^{(1)}=0.5\)</span> and thus <span class="math inline">\(\widehat{\text{Err}}^{(.632)}=0.632\cdot 0.5=0.316\)</span>, where here the true error rate is <span class="math inline">\(0.5\)</span>.</p>
+<hr>
+<p>There is an improved version of the estimator - taking into account the amount of overfitting, leading to an adjustment to the weight <span class="math inline">\(w=0.632\)</span> (and <span class="math inline">\(1-w=0.368\)</span>) dependent on a socalled <em>no-information error rate</em>=<span class="math inline">\(\gamma\)</span>=the error rate of the prediction rule when predictors and class labels are independent.</p>
+<p><span class="math display">\[\hat{\gamma}=\frac{1}{N^2}\sum_{i=1}^{N}\sum_{i´=1}^N L(y_i,\hat{f}(x_{i´}))\]</span> Further the <em>relative overfitting rate</em> is defined to be</p>
+<p><span class="math display">\[ \hat{R}=\frac{\widehat{\text{Err}}^{(1)}-\overline{\text{err}}}{\hat{\gamma}-\overline{\text{err}}}\]</span></p>
+<hr>
+<p>Finally, the “.632+”-estimator is</p>
+<p><span class="math display">\[\widehat{\text{Err}}^{(.632+)}=(1-\hat{w}) \overline{\text{err}}+ \hat{w} \widehat{\text{Err}}^{(1)}\]</span> where <span class="math inline">\(\hat{w}=\frac{0.632}{1-0.368 \hat{R}}\)</span>.</p>
+<p>For details on this approach consult ESL page 252-253.</p>
+<hr>
+</section>
+<section id="conclusions" class="level1">
+<h1>Conclusions</h1>
+<section id="group-discussion-6" class="level2">
+<h2 class="anchored" data-anchor-id="group-discussion-6">Group discussion:</h2>
+<p>Construct a “mind map” or “overview sheet” or “concept map” (mind map with verbs on arrows between entities) for the “Model assessment and selection” topics, and write down important take home messages!</p>
+<p>Some concept that could be in the map: <span class="math inline">\(\text{Err}\)</span>,<span class="math inline">\(\text{Err}_{\cal T}\)</span>,<span class="math inline">\(\text{Err}_{\text{in}}\)</span>,<span class="math inline">\(\widehat{\text{Err}}_{\text{in}}\)</span>,<span class="math inline">\(\overline{\text{err}}\)</span>,<span class="math inline">\(\omega\)</span>,<span class="math inline">\(\text{Cov}(\hat{y}_i,y_i)\)</span>,<span class="math inline">\(\text{trace}(S)\)</span>,df,<span class="math inline">\(\text{CV}(\hat{f})\)</span>, bootstrap, <span class="math inline">\(\widehat{\text{Err}}^{(1)}\)</span>, <span class="math inline">\(0.632\)</span>, <span class="math inline">\(0.368\)</span>, model assessment, model selection.</p>
+<hr>
+</section>
+<section id="final-remarks" class="level2">
+<h2 class="anchored" data-anchor-id="final-remarks">Final remarks</h2>
+<ul>
+<li>In a perfect world we would be rich on data and can divide available data into sets for training, validation and testing</li>
+<li>We have derived cool covariance-result on expected optimism for training error related to in-sample prediction error (the covariance) - that is used for finding model selection criteria (but not for model assessment). If we can´t calculate a formula for the covariance, bootstrapping can be used to do this (<span class="citation" data-cites="casi">Efron and Hastie (<a href="#ref-casi" role="doc-biblioref">2016</a>)</span> Equation 12.64 on åage 224).</li>
+<li>Estimating expected prediction (test) error for a particular training set is not easy in general (if we only have this one training set), but cross-validation and bootstrapping may provide reasonable estimates of the expected test error <span class="math inline">\(\text{Err}\)</span>.</li>
+<li>If resampling needed for model assessment: take average of many 10-fold CV <span class="math inline">\(\text{Err}\)</span> estimates?</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="exercises" class="level1">
+<h1>Exercises</h1>
+<section id="expected-training-and-test-mse-for-linear-regression" class="level3">
+<h3 class="anchored" data-anchor-id="expected-training-and-test-mse-for-linear-regression">1) Expected training and test MSE for linear regression</h3>
+<p>Do exercise 2.9.</p>
+<p>Important take home message: We have proven (for MLR) that the expected test MSE is always at least as large as the expected training MSE.</p>
+</section>
+<section id="establish-the-average-optimism-in-the-training-error" class="level3">
+<h3 class="anchored" data-anchor-id="establish-the-average-optimism-in-the-training-error">2) Establish the average optimism in the training error</h3>
+<p><span class="math display">\[ \omega=\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)\]</span> Exercise 7.4</p>
+<hr>
+</section>
+<section id="relate-the-covariance-to-the-trace-of-a-linear-smoother" class="level2">
+<h2 class="anchored" data-anchor-id="relate-the-covariance-to-the-trace-of-a-linear-smoother">Relate the covariance to the trace of a linear smoother</h2>
+<p>Exercise 7.5</p>
+<p>Need to know about covariance and variance of linear combinations. The reading list in TMA4267 included Härdle and Simar (2015): Applied Multivariate Statistical Analysis (fourth edition) - <a href="https://www.springer.com/gp/book/9783662451717">ebook from Springer available at NTNU</a>. Alternatively <a href="https://www.math.ntnu.no/emner/TMA4267/2017v/TMA4267V2017Part1.pdf">classnotes from TMA4267 (page 58-59)</a></p>
+<hr>
+</section>
+<section id="derive-the-estimate-of-in-sample-error" class="level2">
+<h2 class="anchored" data-anchor-id="derive-the-estimate-of-in-sample-error">Derive the estimate of in-sample error</h2>
+<p>for the additive error model <span class="math display">\[Y=f(X)+\varepsilon\]</span> of Eq (7.24):</p>
+<p><span class="math display">\[ \text{E}_{y}(\text{Err}_{\text{in}})=\text{E}_{y}(\bar{\text{err}})+2 \cdot \frac{d}{N} \sigma^2_{\varepsilon}\]</span> Prove this for the MLR OLS solution.</p>
+<hr>
+</section>
+<section id="additive-error-model-effective-degrees-of-freedom" class="level2">
+<h2 class="anchored" data-anchor-id="additive-error-model-effective-degrees-of-freedom">Additive error model effective degrees of freedom</h2>
+<p>Exercise 7.6</p>
+<p>Show that for an additive-error model, the eﬀective degrees-of freedom for the <span class="math inline">\(k\)</span>-nearest-neighbors regression ﬁt is <span class="math inline">\(N/k\)</span>.</p>
+<p>Hint: write this as a linear smoother.</p>
+</section>
+<section id="uio-stk-in4300stk-in9300-statistical-learning-methods-in-data-science" class="level2">
+<h2 class="anchored" data-anchor-id="uio-stk-in4300stk-in9300-statistical-learning-methods-in-data-science">UiO STK-IN4300/STK-IN9300 –– Statistical learning methods in Data Science</h2>
+<p>Exam 2018, Problem 2: Bootstrapping for model evaluation</p>
+<p>Consider the following procedure to estimate the prediction error:</p>
+<ol type="1">
+<li><p>generate <span class="math inline">\(B\)</span> bootstrap samples <span class="math inline">\(z_1,z_2,\ldots, z_B\)</span> where <span class="math inline">\(z_b=\{(y_1^*,x_1^*),\ldots,(y_N^*,x_N^*)\}\)</span>, <span class="math inline">\(b=1,\ldots,B\)</span> and <span class="math inline">\((y_i^*,x_i^*)\)</span>, <span class="math inline">\(i = 1, . . . , N\)</span>, is an observation sampled from the original dataset;</p></li>
+<li><p>apply the prediction rule to each bootstrap sample to derive the preditions <span class="math inline">\(\hat{f}_b^*(x_i)\)</span>, <span class="math inline">\(b=1,\ldots,B\)</span>.</p></li>
+<li><p>compute the error for each point, and take the average, <span class="math display">\[\widehat{\text{Err}}_{\text{boot}}=\frac{1}{B}\sum_{b=1}^B \frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}_b^*(x_i))\]</span></p></li>
+</ol>
+<ol type="a">
+<li><p>Explain why this procedure is incorrect and suggest a diﬀerent way to proceed which still uses a bootstrap approach.</p></li>
+<li><p>Describe the 0.632 bootstrap and the 0.632+ bootstrap procedures, explaining in particular the rationale behind their construction.</p></li>
+</ol>
+</section>
+<section id="comparing-methods" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-methods">Comparing methods</h2>
+<p>Exercise 7.9 (minus BIC).</p>
+<p>For the prostate data of ESL Chapter 3, carry out a best-subset linear regression analysis, as in Table 3.3 (third column from left). Compute the AIC, ﬁve- and tenfold cross-validation, and bootstrap .632 estimates of prediction error. Discuss the results.</p>
+</section>
+</section>
+<section id="solutions-to-exercises" class="level1">
+<h1>Solutions to exercises</h1>
+<p>Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <a href="mailto:Mette.Langaas@ntnu.no" class="email">Mette.Langaas@ntnu.no</a>. (The solutions given here are very similar to the UiO STK-IN4300 solutions, see link under References.)</p>
+<ul>
+<li><a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ELSe29.pdf">2.9</a></li>
+<li><a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ESLe74add.pdf">7.4</a></li>
+<li><a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ELSe75.pdf">7.5</a></li>
+<li><a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ESLe71.pdf">7.1</a></li>
+<li><a href="https://github.com/mettelang/MA8701V2023/blob/main/Part1/ESLe76.pdf">7.6</a></li>
+<li>Solution from Hastie: <a href="https://waxworksmath.com/Authors/G_M/Hastie/Code/Chapter7/Exericse_7_9.R">7.9</a> also using <a href="https://waxworksmath.com/Authors/G_M/Hastie/Code/Chapter7/utils.R">utils.R</a></li>
+</ul>
+<section id="uio-stk-in4300stk-in9300-solutions-from-uio" class="level3">
+<h3 class="anchored" data-anchor-id="uio-stk-in4300stk-in9300-solutions-from-uio">UiO STK-IN4300/STK-IN9300 Solutions (from UiO)</h3>
+<ol type="a">
+<li>The procedure is incorrect because the prediction error is computed on observations already used to train the prediction rule. This lead to underestimation of the error (writing “too optimistic” was acceptable).</li>
+</ol>
+<p>A possible solution is to compute the prediction error only on those observations (in average 36.8% of the original sample) not included in the bootstrap sample. Since this approach leads to overestimating the prediction error, solutions like those described in the point (b) has been implemented.</p>
+<ol start="2" type="a">
+<li>The 0.632 bootstrap procedure addresses the problem of overestimation of the correct procedure described in point (a) by averaging it (with weight 0.632 and 0.368, respectively) with the training error (underestimated error). The result is a sort of compromise between overestimation and underestimation.</li>
+</ol>
+<p><span class="math display">\[\widehat{\text{Err}}^{(\text{0.632})}=0.632 \cdot  \widehat{\text{Err}}^{(1)}+0.368 \cdot \overline{\text{err}}\]</span> where <span class="math inline">\(\overline{\text{err}}\)</span> is the training error and <span class="math inline">\(\widehat{\text{Err}}^{(1)}\)</span> the corrected procedure decribed in (a). Since the <span class="math inline">\(0.632\)</span> and <span class="math inline">\(0.382\)</span> weights may not be the best choice (e.g., in case of complete overﬁtting in the training set), the 0.632+ bootstrap has been developed. In the latter procedure,</p>
+<p><span class="math display">\[\widehat{\text{Err}}^{(\text{0.632+})}=\hat{w} \cdot  \widehat{\text{Err}}^{(1)}+ (1-\hat{w}) \cdot \overline{\text{err}}\]</span></p>
+<p>the weights depend on the relative overﬁtting rate, so the 0.632+ bootstrap can be seen as a better compromise between the overestimation and underestimation of the prediction error done by the corrected procedure described at point (a) and the training error, respectively.</p>
+</section>
+</section>
+<section id="reference-links" class="level1">
+<h1>Reference links</h1>
+<ul>
+<li><p><a href="https://hastie.su.domains/ElemStatLearn/">ESL official errata:</a> and choose “Errata” in the left menu</p></li>
+<li><p><a href="https://waxworksmath.com/Authors/G_M/Hastie/hastie.html">ESL solutions to exercises</a></p></li>
+<li><p><a href="https://www.uio.no/studier/emner/matnat/math/STK-IN4300/h20/exercises.html">ESL solutions from UiO</a></p></li>
+<li><p><a href="https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf">CASI Computer Age Statistical Inference, Efron and Hastie (2017). Chapter 12: Cross-Validation and <span class="math inline">\(C_p\)</span> Estimates of Prediction Error</a></p></li>
+<li><p><a href="https://link.springer.com/chapter/10.1007/978-0-387-22456-5_7">Burnham and Andersen (2002): Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. Springer. Chapter 7: Statistical Theory and Numerical Results</a></p></li>
+</ul>
+</section>
+<section id="bibliography" class="level1">
+<h1>Bibliography</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-casi" class="csl-entry" role="listitem">
+Efron, Bradley, and Trevor Hastie. 2016. <em>Computer Age Statistical Inference - Algorithms, Evidence, and Data Science</em>. Cambridge University Press. <a href="https://hastie.su.domains/CASI/">https://hastie.su.domains/CASI/</a>.
+</div>
+<div id="ref-ESL" class="csl-entry" role="listitem">
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2009. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. Vol. 2. Springer series in statistics New York. <a href="https://hastie.su.domains/ElemStatLearn">hastie.su.domains/ElemStatLearn</a>.
+</div>
+<div id="ref-ISL2" class="csl-entry" role="listitem">
+James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2023. <em>An Introduction to Statistical Learning with Applications in r, Second Edition</em>. Vol. 112. Springer.
+</div>
+</div>
+</section>
+<section id="discussion-and-conclusions" class="level1">
+<h1>Discussion and conclusions</h1>
+<ul>
+<li>What are key take home messages from today´s teaching session?</li>
+<li>What do you plan to do before the next teaching session?</li>
+<li>Feedback on today´s teaching session?</li>
+</ul>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
